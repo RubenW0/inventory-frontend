@@ -1,0 +1,76 @@
+/* Root instellingen: font, line-height, kleuren */
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light;
+
+  /* Standaard kleuren voor alle pagina’s */
+  color: #111; /* neutraal, leesbaar op lichte achtergronden */
+  background-color: #f0f0f0;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Links */
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: none;
+}
+a:hover {
+  color: #535bf2;
+}
+
+/* Body reset */
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: inherit; /* gebruikt de root achtergrond */
+  color: inherit; /* gebruikt de root kleur */
+  font-family: inherit;
+}
+
+/* Titels */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Buttons reset: globale stijl neutraal */
+button {
+  border-radius: 4px;
+  border: 1px solid transparent;
+  padding: 0.5em 1em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Media query: lichte modus */
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #111;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}

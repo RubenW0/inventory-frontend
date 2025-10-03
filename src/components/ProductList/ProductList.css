@@ -1,0 +1,95 @@
+/* Container centreren */
+.product-page {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Header */
+.product-page .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.product-page h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+/* Knoppen */
+.add-btn {
+  padding: 8px 16px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.add-btn:hover {
+  background: #1d4ed8;
+}
+
+.edit-btn {
+  margin-right: 10px;
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+}
+.edit-btn:hover {
+  text-decoration: underline;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+}
+.delete-btn:hover {
+  text-decoration: underline;
+}
+
+/* Search bar */
+.search-bar {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+/* Table */
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.product-table th,
+.product-table td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.product-table th {
+  background: #f9fafb;
+}
+
+.product-table tr:hover {
+  background: #f3f4f6;
+}
+
+/* Loading text */
+.loading {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 18px;
+  color: #555;
+}

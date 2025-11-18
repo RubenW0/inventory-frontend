@@ -1,26 +1,47 @@
-import { useState } from "react";
-import "./ProductModal.css"; 
-
-
+import { useState, useEffect } from "react";
+import "./ProductModal.css";
+import type { Product, ProductType } from "../Types";
+import { ProductTypeDisplay, ProductUnit } from "../Types"; 
 
 interface EditProductModalProps {
-  product: { id: number; name: string; price: number; stock: number };
+  product: Product;
   onClose: () => void;
-  onSave: (product: { id: number; name: string; price: number; stock: number }) => void;
+  onSave: (product: Product) => void;
 }
 
 export default function EditProductModal({ product, onClose, onSave }: EditProductModalProps) {
   const [name, setName] = useState(product.name);
-  const [price, setPrice] = useState(product.price.toString());
-  const [stock, setStock] = useState(product.stock.toString());
+  const [type, setType] = useState<ProductType>(product.type);
+  const [stockQuantity, setStockQuantity] = useState(String(product.stock_quantity));
+  const [minStock, setMinStock] = useState(String(product.min_stock));
+  const [advisedPrice, setAdvisedPrice] = useState(String(product.advised_price));
+  const [totalValue, setTotalValue] = useState(String(product.total_value));
+  const [location, setLocation] = useState(product.location);
+  const [status, setStatus] = useState(product.status);
+
+  useEffect(() => {
+    setName(product.name);
+    setType(product.type);
+    setStockQuantity(String(product.stock_quantity));
+    setMinStock(String(product.min_stock));
+    setAdvisedPrice(String(product.advised_price));
+    setTotalValue(String(product.total_value));
+    setLocation(product.location);
+    setStatus(product.status);
+  }, [product]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave({
       id: product.id,
       name,
-      price: parseFloat(price),
-      stock: parseInt(stock),
+      type,
+      stock_quantity: parseInt(stockQuantity),
+      min_stock: parseInt(minStock),
+      advised_price: parseFloat(advisedPrice),
+      total_value: parseFloat(totalValue),
+      location,
+      status,
     });
     onClose();
   };
@@ -34,14 +55,51 @@ export default function EditProductModal({ product, onClose, onSave }: EditProdu
             Name
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
           </label>
+
           <label>
-            Price
-            <input type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required />
+            Type
+            <select value={type} onChange={(e) => setType(e.target.value as ProductType)} required>
+              {Object.keys(ProductTypeDisplay).map((key) => (
+                <option key={key} value={key}>
+                  {ProductTypeDisplay[key as ProductType]}
+                </option>
+              ))}
+            </select>
           </label>
+
           <label>
-            Stock
-            <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} required />
+            Stock Quantity
+            <input type="number" value={stockQuantity} onChange={(e) => setStockQuantity(e.target.value)} required />
+            <span>{ProductUnit[type]}</span>
           </label>
+
+          <label>
+            Min Stock
+            <input type="number" value={minStock} onChange={(e) => setMinStock(e.target.value)} required />
+            <span>{ProductUnit[type]}</span>
+          </label>
+
+          <label>
+            Advised Price
+            <input type="number" step="0.01" value={advisedPrice} onChange={(e) => setAdvisedPrice(e.target.value)} required />
+            <span>€/ {ProductUnit[type]}</span>
+          </label>
+
+          <label>
+            Total Value
+            <input type="number" step="0.01" value={totalValue} onChange={(e) => setTotalValue(e.target.value)} required />
+          </label>
+
+          <label>
+            Location
+            <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required />
+          </label>
+
+          <label>
+            Status
+            <input type="text" value={status} onChange={(e) => setStatus(e.target.value)} required />
+          </label>
+
           <div className="modal-actions">
             <button type="submit" className="save-btn">Save</button>
             <button type="button" className="cancel-btn" onClick={onClose}>Cancel</button>

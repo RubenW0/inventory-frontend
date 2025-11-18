@@ -1,93 +1,88 @@
-/* Donkere achtergrond achter de popup */
 .modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5); /* half transparant zwart */
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 1000; /* altijd bovenop */
+  align-items: center;
+  padding: 20px; /* belangrijk voor kleinere schermen */
+  overflow: auto; /* fallback */
 }
 
-/* De popup zelf */
 .modal {
   background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 450px;     /* modal breder = minder hoog */
+  max-height: 90vh;     /* voorkomt uitsteken */
+  overflow-y: auto;     /* scroll als hij te groot is */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   animation: fadeIn 0.2s ease-in-out;
-  z-index: 1001;
 }
 
-/* Titel */
-.modal h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-}
-
-/* Formulier */
 .modal-form label {
-  display: block;
-  margin-bottom: 1rem;
-  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
 }
 
 .modal-form input {
-  width: 100%;
-  padding: 0.6rem;
-  margin-top: 0.3rem;
-  border: 1px solid #ccc;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid #ddd;
   border-radius: 6px;
 }
 
-/* Actie knoppen */
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 0.8rem;
-  margin-top: 1rem;
+  margin-top: 20px;
+  gap: 10px;
 }
 
 .save-btn {
-  background: #4caf50;
+  padding: 8px 16px;
+  background: #2563eb;
   color: white;
   border: none;
-  padding: 0.6rem 1.2rem;
   border-radius: 6px;
   cursor: pointer;
-}
-
-.save-btn:hover {
-  background: #43a047;
 }
 
 .cancel-btn {
-  background: #f44336;
-  color: white;
+  padding: 8px 16px;
+  background: #e5e7eb;
   border: none;
-  padding: 0.6rem 1.2rem;
   border-radius: 6px;
   cursor: pointer;
 }
 
-.cancel-btn:hover {
-  background: #d32f2f;
+.modal-form select {
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
 }
 
-/* Animatie bij openen */
+.modal-form select {
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><polygon points="0,0 16,0 8,8" fill="%23999"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+  padding-right: 30px; 
+}
+
+
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
 }

@@ -1,0 +1,27 @@
+.navbar-container {
+  max-width: 900px;
+  margin: 10px auto 0 auto;   /* minder witruimte boven */
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  background: #f3f3f3;
+  padding: 10px 16px;          /* compacter */
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+  
+.nav-item {
+  font-weight: 500;
+  padding: 6px 12px;           /* iets kleiner */
+  border-radius: 8px;
+  text-decoration: none;
+  color: black;
+}
+
+.nav-item.active {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-weight: 600;
+}

@@ -1,7 +1,7 @@
 /* Container centreren */
 .product-page {
   max-width: 900px;
-  margin: 40px auto;
+  margin: 20px auto;
   padding: 20px;
   background: #fff;
   border-radius: 8px;
@@ -13,7 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .product-page h1 {

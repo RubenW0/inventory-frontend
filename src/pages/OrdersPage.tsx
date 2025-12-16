@@ -1,3 +1,9 @@
+import OrderList from "../components/OrderList/OrderList";
+
 export default function OrdersPage() {
-  return <h1>Orders</h1>;
+    return (
+        <div>
+            <OrderList />
+        </div>
+    );
 }

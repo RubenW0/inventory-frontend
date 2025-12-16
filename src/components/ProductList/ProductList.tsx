@@ -30,7 +30,6 @@ export default function ProductList() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  // Fetch all products
   const fetchProducts = () => {
     setLoading(true);
     fetch("http://127.0.0.1:8000/products/")
@@ -111,7 +110,6 @@ export default function ProductList() {
         </button>
       </div>
 
-      {/* Search + Sort */}
       <div className="filters">
         <input
           type="text"

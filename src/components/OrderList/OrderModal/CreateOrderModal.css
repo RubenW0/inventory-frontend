@@ -1,38 +1,67 @@
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal {
+.order-card {
   background: white;
-  padding: 20px;
+  padding: 24px;
   border-radius: 8px;
-  width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
-.product-list button {
-  margin: 4px;
-}
-
-.order-item {
+.product-row, .order-item {
   display: flex;
   justify-content: space-between;
-  margin: 6px 0;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 8px;
 }
 
-.modal-actions {
+.product-row .price {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.order-item-info {
+  flex: 1;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.quantity-controls input {
+  width: 50px;
+  text-align: center;
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.quantity-controls button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #ccc;
+  background: #f0f0f0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button.danger {
+  background: #e53935;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+.empty {
+  color: #777;
+  font-style: italic;
+}
+
+.actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.secondary {
-  background: #e5e7eb;
+  margin-top: 16px;
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../../../api/api";
 import "./CreateOrderModal.css";
 
 interface Product {
@@ -25,15 +26,23 @@ export default function CreateOrderModal() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [supplierId, setSupplierId] = useState<number | null>(null);
   const [items, setItems] = useState<OrderItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/products/")
-      .then(res => res.json())
-      .then(setProducts);
-
-    fetch("http://127.0.0.1:8000/suppliers/")
-      .then(res => res.json())
-      .then(setSuppliers);
+    const load = async () => {
+      try {
+        setLoading(true);
+        const [productData, supplierData] = await Promise.all([
+          apiFetch("/products/"),
+          apiFetch("/suppliers/")
+        ]);
+        setProducts(productData);
+        setSuppliers(supplierData);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
   }, []);
 
   const addProduct = (productId: number) => {
@@ -43,9 +52,7 @@ export default function CreateOrderModal() {
 
   const updateQuantity = (productId: number, quantity: number) => {
     if (quantity < 1) return;
-    setItems(items.map(i =>
-      i.product_id === productId ? { ...i, quantity } : i
-    ));
+    setItems(items.map(i => (i.product_id === productId ? { ...i, quantity } : i)));
   };
 
   const removeProduct = (productId: number) => {
@@ -54,20 +61,19 @@ export default function CreateOrderModal() {
 
   const submitOrder = async () => {
     if (!supplierId || items.length === 0) return;
-
-    await fetch("http://127.0.0.1:8000/orders/create", {
+    await apiFetch("/orders/create/", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         supplier_id: supplierId,
         items
       })
     });
-
     navigate("/orders");
   };
 
   const getProduct = (id: number) => products.find(p => p.id === id);
+
+  if (loading) return <p className="loading">Loading...</p>;
 
   return (
     <div className="order-page">
@@ -118,7 +124,7 @@ export default function CreateOrderModal() {
                 <div className="order-item-info">
                   <strong>{product.name}</strong>
                   <div>
-                    €{product.advised_price.toFixed(2)} × {item.quantity} = 
+                    €{product.advised_price.toFixed(2)} × {item.quantity} =
                     <strong> €{total.toFixed(2)}</strong>
                   </div>
                 </div>
@@ -129,17 +135,12 @@ export default function CreateOrderModal() {
                     type="number"
                     min="1"
                     value={item.quantity}
-                    onChange={e =>
-                      updateQuantity(item.product_id, Number(e.target.value))
-                    }
+                    onChange={e => updateQuantity(item.product_id, Number(e.target.value))}
                   />
                   <button onClick={() => updateQuantity(item.product_id, item.quantity + 1)}>+</button>
                 </div>
 
-                <button
-                  className="danger"
-                  onClick={() => removeProduct(item.product_id)}
-                >
+                <button className="danger" onClick={() => removeProduct(item.product_id)}>
                   ✕
                 </button>
               </div>
@@ -148,10 +149,7 @@ export default function CreateOrderModal() {
         </section>
 
         <div className="actions">
-          <button
-            onClick={submitOrder}
-            disabled={!supplierId || items.length === 0}
-          >
+          <button onClick={submitOrder} disabled={!supplierId || items.length === 0}>
             Create Order
           </button>
         </div>

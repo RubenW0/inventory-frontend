@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../api/api";
 import "./ProductList.css";
 
 import AddProductModal from "./ProductModals/AddProductModal";
 import EditProductModal from "./ProductModals/EditProductModal";
 import type { ProductType } from "./Types";
 import { ProductUnit } from "./Types";
-
 
 interface Product {
   id: number;
@@ -30,61 +30,73 @@ export default function ProductList() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  const fetchProducts = () => {
-    setLoading(true);
-    fetch("http://127.0.0.1:8000/products/")
-      .then((res) => res.json())
-      .then((data: Product[]) => {
-        setProducts(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching products:", err);
-        setLoading(false);
-      });
+  /* ---------------- API calls ---------------- */
+
+  const normalizeType = (type: string): ProductType => {
+    switch (type.toLowerCase()) {
+      case "boulders":
+        return "Boulders";
+      case "pavingstones":
+      case "stone & pavings":
+        return "PavingStones";
+      case "tiles":
+        return "Tiles";
+      case "gravelandchippings":
+      case "gravel & chippings":
+        return "GravelAndChippings";
+      default:
+        return "PavingStones"; // fallback
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const data = await apiFetch("/products/");
+
+      // Normalize type to match ProductType
+      const normalized: Product[] = data.map((p: any) => ({
+        ...p,
+        type: normalizeType(p.type),
+      }));
+
+      setProducts(normalized);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  // Add product
-  const handleAddProduct = (productData: Omit<Product, "id">) => {
-    fetch("http://127.0.0.1:8000/products/create/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(productData),
-    })
-      .then((res) => res.json())
-      .then(() => fetchProducts())
-      .catch((err) => console.error("Error adding product:", err));
-  };
-
-  // Edit product
-  const handleEditProduct = (updated: Product) => {
-    fetch(`http://127.0.0.1:8000/products/${updated.id}/update/`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    })
-      .then((res) => res.json())
-      .then(() => fetchProducts())
-      .catch((err) => console.error("Error editing product:", err));
-  };
-
-  // Delete product
-  const handleDeleteProduct = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      fetch(`http://127.0.0.1:8000/products/${id}/delete/`, {
-        method: "DELETE",
-      })
-        .then((res) => res.json())
-        .then(() => fetchProducts())
-        .catch((err) => console.error("Error deleting product:", err));
+  const handleEditProduct = async (updated: Product) => {
+    try {
+      await apiFetch(`/products/${updated.id}/update/`, {
+        method: "PUT",
+        body: JSON.stringify(updated),
+      });
+      fetchProducts();
+    } catch (err) {
+      console.error("Error editing product:", err);
     }
   };
 
-  // Filter & sort
+  const handleDeleteProduct = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
+
+    try {
+      await apiFetch(`/products/${id}/delete/`, { method: "DELETE" });
+      fetchProducts();
+    } catch (err) {
+      console.error("Error deleting product:", err);
+    }
+  };
+
+  /* ---------------- Filter & sort ---------------- */
+
   const filteredProducts = products.filter(
     (p) =>
       p.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -100,6 +112,9 @@ export default function ProductList() {
   });
 
   if (loading) return <p className="loading">Loading...</p>;
+
+  /* ---------------- UI ---------------- */
+console.log("Products state:", products); // tijdelijke debug
 
   return (
     <div className="product-page">
@@ -118,6 +133,7 @@ export default function ProductList() {
           onChange={(e) => setSearch(e.target.value)}
           className="search-input"
         />
+
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
@@ -143,14 +159,19 @@ export default function ProductList() {
             <th>Action</th>
           </tr>
         </thead>
+
         <tbody>
           {sortedProducts.map((p) => (
             <tr key={p.id}>
               <td>{p.name}</td>
               <td>{p.type}</td>
-              <td>{p.stock_quantity} {ProductUnit[p.type]}</td>
+              <td>
+                {p.stock_quantity} {ProductUnit[p.type] || ""}
+              </td>
               <td>{p.min_stock}</td>
-              <td>€{p.advised_price} / {ProductUnit[p.type]}</td>
+              <td>
+                €{p.advised_price} / {ProductUnit[p.type] || ""}
+              </td>
               <td>€{p.total_value}</td>
               <td>{p.location}</td>
               <td>{p.status}</td>
@@ -179,7 +200,7 @@ export default function ProductList() {
       {showAddModal && (
         <AddProductModal
           onClose={() => setShowAddModal(false)}
-          onSave={handleAddProduct}
+          onSave={() => fetchProducts()}
         />
       )}
 

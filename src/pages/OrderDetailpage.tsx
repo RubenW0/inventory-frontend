@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { apiFetch } from "../api/api";
 
 interface OrderItem {
   product: string;
@@ -22,18 +23,20 @@ export default function OrderDetailPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const loadOrder = async () => {
+    try {
+      setLoading(true);
+      const data = await apiFetch(`/orders/${id}/`);
+      setOrder(data);
+    } catch {
+      setError("Failed to load order");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/orders/${id}/`) // let op de trailing slash!
-      .then(res => res.json())
-      .then(data => {
-        setOrder(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setError("Failed to load order");
-        setLoading(false);
-      });
+    loadOrder();
   }, [id]);
 
   const markAsDelivered = async () => {
@@ -42,27 +45,17 @@ export default function OrderDetailPage() {
     setError(null);
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/orders/${id}/receive/`, { // slash toegevoegd
-        method: "POST",
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || "Failed to mark as delivered");
-      }
-
-      // refresh order data after marking as delivered
-      const updatedOrder = await fetch(`http://127.0.0.1:8000/orders/${id}/`).then(r => r.json());
-      setOrder(updatedOrder);
+      await apiFetch(`/orders/${id}/receive/`, { method: "POST" });
+      const updated = await apiFetch(`/orders/${id}/`);
+      setOrder(updated);
     } catch (err: any) {
-      console.error(err);
       setError(err.message || "Error marking as delivered");
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) return <p>Order laden...</p>;
+  if (loading) return <p>Loading order...</p>;
   if (error) return <p className="error">{error}</p>;
 
   return (

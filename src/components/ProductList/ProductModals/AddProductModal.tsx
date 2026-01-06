@@ -1,20 +1,12 @@
 import { useState } from "react";
 import "./ProductModal.css";
 import type { ProductType } from "../Types";
-import { ProductTypeDisplay, ProductUnit } from "../Types"; 
+import { ProductTypeDisplay, ProductUnit } from "../Types";
+import { apiFetch } from "../../../api/api"; // use your apiFetch
 
 interface AddProductModalProps {
   onClose: () => void;
-  onSave: (product: {
-    name: string;
-    type: ProductType;
-    stock_quantity: number;
-    min_stock: number;
-    advised_price: number;
-    total_value: number;
-    location: string;
-    status: string;
-  }) => void;
+  onSave: () => void; // simplified: we fetch products after saving
 }
 
 export default function AddProductModal({ onClose, onSave }: AddProductModalProps) {
@@ -27,21 +19,39 @@ export default function AddProductModal({ onClose, onSave }: AddProductModalProp
   const [location, setLocation] = useState("");
   const [status, setStatus] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    onSave({
-      name,
-      type,
-      stock_quantity: parseInt(stockQuantity),
-      min_stock: parseInt(minStock),
-      advised_price: parseFloat(advisedPrice),
-      total_value: parseFloat(totalValue),
-      location,
-      status,
-    });
+    try {
+      await apiFetch("/products/create/", {
+        method: "POST",
+        body: JSON.stringify({
+          name,
+          type,
+          stock_quantity: parseFloat(stockQuantity),
+          min_stock: parseFloat(minStock),
+          advised_price: parseFloat(advisedPrice),
+          total_value: parseFloat(totalValue),
+          location,
+          status,
+        }),
+      });
 
-    onClose();
+      // reset form
+      setName("");
+      setStockQuantity("");
+      setMinStock("");
+      setAdvisedPrice("");
+      setTotalValue("");
+      setLocation("");
+      setStatus("");
+
+      onSave(); // trigger parent to fetch products again
+      onClose();
+    } catch (err) {
+      console.error("Failed to add product:", err);
+      alert("Failed to add product. Check console for details.");
+    }
   };
 
   return (

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../../api/api";
 import "./OrderList.css";
 
 interface OrderItem {
@@ -21,18 +22,16 @@ export default function OrderList() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const fetchOrders = () => {
-    setLoading(true);
-    fetch("http://127.0.0.1:8000/orders/")
-      .then(res => res.json())
-      .then((data: Order[]) => {
-        setOrders(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error loading orders:", err);
-        setLoading(false);
-      });
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const data = await apiFetch("/orders/");
+      setOrders(data);
+    } catch (err) {
+      console.error("Error loading orders:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -42,13 +41,15 @@ export default function OrderList() {
   if (loading) return <p className="loading">Orders aan het laden...</p>;
 
   const formatDate = (date: string) =>
-    new Date(date).toLocaleString("nl-NL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit"
-    }).replace(",", "");
+    new Date(date)
+      .toLocaleString("nl-NL", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+      .replace(",", "");
 
   return (
     <div className="order-page">
@@ -69,8 +70,9 @@ export default function OrderList() {
             <th>Items</th>
           </tr>
         </thead>
+
         <tbody>
-          {orders.map(order => (
+          {orders.map((order) => (
             <tr
               key={order.id}
               onClick={() => navigate(`/orders/${order.id}`)}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./ProductModal.css";
 import type { Product, ProductType } from "../Types";
-import { ProductTypeDisplay, ProductUnit } from "../Types"; 
+import { ProductTypeDisplay, ProductUnit } from "../Types";
 
 interface EditProductModalProps {
   product: Product;
@@ -41,7 +41,7 @@ export default function EditProductModal({ product, onClose, onSave }: EditProdu
       advised_price: parseFloat(advisedPrice),
       total_value: parseFloat(totalValue),
       location,
-      status,
+      status
     });
     onClose();
   };
@@ -50,16 +50,17 @@ export default function EditProductModal({ product, onClose, onSave }: EditProdu
     <div className="modal-backdrop">
       <div className="modal">
         <h2>Edit Product</h2>
+
         <form onSubmit={handleSubmit} className="modal-form">
           <label>
             Name
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+            <input value={name} onChange={e => setName(e.target.value)} required />
           </label>
 
           <label>
             Type
-            <select value={type} onChange={(e) => setType(e.target.value as ProductType)} required>
-              {Object.keys(ProductTypeDisplay).map((key) => (
+            <select value={type} onChange={e => setType(e.target.value as ProductType)} required>
+              {Object.keys(ProductTypeDisplay).map(key => (
                 <option key={key} value={key}>
                   {ProductTypeDisplay[key as ProductType]}
                 </option>
@@ -69,35 +70,57 @@ export default function EditProductModal({ product, onClose, onSave }: EditProdu
 
           <label>
             Stock Quantity
-            <input type="number" value={stockQuantity} onChange={(e) => setStockQuantity(e.target.value)} required />
+            <input
+              type="number"
+              value={stockQuantity}
+              onChange={e => setStockQuantity(e.target.value)}
+              required
+            />
             <span>{ProductUnit[type]}</span>
           </label>
 
           <label>
             Min Stock
-            <input type="number" value={minStock} onChange={(e) => setMinStock(e.target.value)} required />
+            <input
+              type="number"
+              value={minStock}
+              onChange={e => setMinStock(e.target.value)}
+              required
+            />
             <span>{ProductUnit[type]}</span>
           </label>
 
           <label>
             Advised Price
-            <input type="number" step="0.01" value={advisedPrice} onChange={(e) => setAdvisedPrice(e.target.value)} required />
+            <input
+              type="number"
+              step="0.01"
+              value={advisedPrice}
+              onChange={e => setAdvisedPrice(e.target.value)}
+              required
+            />
             <span>€/ {ProductUnit[type]}</span>
           </label>
 
           <label>
             Total Value
-            <input type="number" step="0.01" value={totalValue} onChange={(e) => setTotalValue(e.target.value)} required />
+            <input
+              type="number"
+              step="0.01"
+              value={totalValue}
+              onChange={e => setTotalValue(e.target.value)}
+              required
+            />
           </label>
 
           <label>
             Location
-            <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required />
+            <input value={location} onChange={e => setLocation(e.target.value)} required />
           </label>
 
           <label>
             Status
-            <input type="text" value={status} onChange={(e) => setStatus(e.target.value)} required />
+            <input value={status} onChange={e => setStatus(e.target.value)} required />
           </label>
 
           <div className="modal-actions">

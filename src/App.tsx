@@ -8,6 +8,10 @@ import OrderCreatePage from "./pages/OrderCreatePage";
 import OrderDetailPage from "./pages/OrderDetailpage";
 // import MapPage from "./pages/MapPage";
 
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+
+
 
 
 function App() {
@@ -17,6 +21,10 @@ function App() {
 
       <div style={{ padding: "20px" }}>
         <Routes>
+
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
           {/* <Route path="/" element={<Dashboard />} /> */}
           <Route path="/products" element={<ProductsPage/>} />
           <Route path="/orders" element={<OrdersPage/>} />

@@ -2,11 +2,11 @@ import { useState } from "react";
 import "./ProductModal.css";
 import type { ProductType } from "../Types";
 import { ProductTypeDisplay, ProductUnit } from "../Types";
-import { apiFetch } from "../../../api/api"; // use your apiFetch
+import { apiFetch } from "../../../api/api";
 
 interface AddProductModalProps {
   onClose: () => void;
-  onSave: () => void; // simplified: we fetch products after saving
+  onSave: () => void; 
 }
 
 export default function AddProductModal({ onClose, onSave }: AddProductModalProps) {
@@ -15,9 +15,7 @@ export default function AddProductModal({ onClose, onSave }: AddProductModalProp
   const [stockQuantity, setStockQuantity] = useState("");
   const [minStock, setMinStock] = useState("");
   const [advisedPrice, setAdvisedPrice] = useState("");
-  const [totalValue, setTotalValue] = useState("");
   const [location, setLocation] = useState("");
-  const [status, setStatus] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,25 +26,20 @@ export default function AddProductModal({ onClose, onSave }: AddProductModalProp
         body: JSON.stringify({
           name,
           type,
-          stock_quantity: parseFloat(stockQuantity),
-          min_stock: parseFloat(minStock),
-          advised_price: parseFloat(advisedPrice),
-          total_value: parseFloat(totalValue),
+          stock_quantity: Number(stockQuantity),
+          min_stock: Number(minStock),
+          advised_price: Number(advisedPrice),
           location,
-          status,
         }),
       });
 
-      // reset form
       setName("");
       setStockQuantity("");
       setMinStock("");
       setAdvisedPrice("");
-      setTotalValue("");
       setLocation("");
-      setStatus("");
 
-      onSave(); // trigger parent to fetch products again
+      onSave(); 
       onClose();
     } catch (err) {
       console.error("Failed to add product:", err);
@@ -111,24 +104,8 @@ export default function AddProductModal({ onClose, onSave }: AddProductModalProp
           </label>
 
           <label>
-            Total Value
-            <input
-              type="number"
-              step="0.01"
-              value={totalValue}
-              onChange={(e) => setTotalValue(e.target.value)}
-              required
-            />
-          </label>
-
-          <label>
             Location
             <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required />
-          </label>
-
-          <label>
-            Status
-            <input type="text" value={status} onChange={(e) => setStatus(e.target.value)} required />
           </label>
 
           <div className="modal-actions">

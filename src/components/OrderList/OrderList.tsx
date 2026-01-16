@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../../api/api";
 import "./OrderList.css";
+import { AuthContext } from "../../context/AuthContext";
 
 interface OrderItem {
   product: string;
@@ -23,6 +24,7 @@ export default function OrderList() {
   const [sortBy, setSortBy] = useState("created_at");
 
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
   const fetchOrders = async () => {
     try {
@@ -53,7 +55,6 @@ export default function OrderList() {
       })
       .replace(",", "");
 
-
   const sortedOrders = [...orders].sort((a, b) => {
     if (sortBy === "created_at") {
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -79,12 +80,13 @@ export default function OrderList() {
             <option value="status">Sort on status</option>
           </select>
 
-          <button className="add-btn" onClick={() => navigate("/orders/create")}>
-            + New Order
-          </button>
+          {(user?.role === "admin" || user?.role === "staff") && (
+            <button className="add-btn" onClick={() => navigate("/orders/create")}>
+              + New Order
+            </button>
+          )}
         </div>
       </div>
-
 
       <table className="order-table">
         <thead>

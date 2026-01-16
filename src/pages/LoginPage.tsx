@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { loginUser, fetchMe } from "../api/api";
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import "./Auth.css";
 
 export default function LoginPage() {
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     username: "",
     password: ""
@@ -18,11 +23,19 @@ export default function LoginPage() {
       localStorage.setItem("refresh", result.refresh);
 
       const me = await fetchMe();
+      console.log("ME RESPONSE:", me);
 
-      localStorage.setItem("username", me.username);
-      localStorage.setItem("role", me.role);
+      const userData = {
+        id: me.id,
+        username: me.username,
+        role: me.role
+      };
 
-      window.location.href = "/";
+      login(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      navigate("/products");
+
     } catch (err: any) {
       alert("Login failed: " + err.message);
     }

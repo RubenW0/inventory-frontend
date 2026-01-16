@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import "./ProductModal.css";
 import type { Product, ProductType } from "../Types";
 import { ProductTypeDisplay, ProductUnit } from "../Types";
+import { apiFetch } from "../../../api/api";
 
 interface EditProductModalProps {
   product: Product;
   onClose: () => void;
-  onSave: (product: Product) => void;
+  onSave: (updated: Product) => void; 
 }
 
 export default function EditProductModal({ product, onClose, onSave }: EditProductModalProps) {
@@ -15,9 +16,7 @@ export default function EditProductModal({ product, onClose, onSave }: EditProdu
   const [stockQuantity, setStockQuantity] = useState(String(product.stock_quantity));
   const [minStock, setMinStock] = useState(String(product.min_stock));
   const [advisedPrice, setAdvisedPrice] = useState(String(product.advised_price));
-  const [totalValue, setTotalValue] = useState(String(product.total_value));
   const [location, setLocation] = useState(product.location);
-  const [status, setStatus] = useState(product.status);
 
   useEffect(() => {
     setName(product.name);
@@ -25,25 +24,42 @@ export default function EditProductModal({ product, onClose, onSave }: EditProdu
     setStockQuantity(String(product.stock_quantity));
     setMinStock(String(product.min_stock));
     setAdvisedPrice(String(product.advised_price));
-    setTotalValue(String(product.total_value));
     setLocation(product.location);
-    setStatus(product.status);
   }, [product]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({
-      id: product.id,
-      name,
-      type,
-      stock_quantity: parseInt(stockQuantity),
-      min_stock: parseInt(minStock),
-      advised_price: parseFloat(advisedPrice),
-      total_value: parseFloat(totalValue),
-      location,
-      status
-    });
-    onClose();
+
+    try {
+      await apiFetch(`/products/${product.id}/update/`, {
+        method: "PUT",
+        body: JSON.stringify({
+          name,
+          type,
+          stock_quantity: Number(stockQuantity),
+          min_stock: Number(minStock),
+          advised_price: Number(advisedPrice),
+          location,
+        }),
+      });
+
+      onSave({
+        id: product.id,
+        name,
+        type,
+        stock_quantity: Number(stockQuantity),
+        min_stock: Number(minStock),
+        advised_price: Number(advisedPrice),
+        total_value: product.total_value,
+        location,
+        status: product.status,
+      });
+
+      onClose();
+    } catch (err) {
+      console.error("Failed to update product:", err);
+      alert("Failed to update product. Check console for details.");
+    }
   };
 
   return (
@@ -103,24 +119,8 @@ export default function EditProductModal({ product, onClose, onSave }: EditProdu
           </label>
 
           <label>
-            Total Value
-            <input
-              type="number"
-              step="0.01"
-              value={totalValue}
-              onChange={e => setTotalValue(e.target.value)}
-              required
-            />
-          </label>
-
-          <label>
             Location
             <input value={location} onChange={e => setLocation(e.target.value)} required />
-          </label>
-
-          <label>
-            Status
-            <input value={status} onChange={e => setStatus(e.target.value)} required />
           </label>
 
           <div className="modal-actions">

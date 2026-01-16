@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { apiFetch } from "../../api/api";
 import "./ProductList.css";
 
@@ -6,6 +6,7 @@ import AddProductModal from "./ProductModals/AddProductModal";
 import EditProductModal from "./ProductModals/EditProductModal";
 import type { ProductType } from "./Types";
 import { ProductUnit } from "./Types";
+import { AuthContext } from "../../context/AuthContext";
 
 interface Product {
   id: number;
@@ -30,6 +31,10 @@ export default function ProductList() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
+  // 🔐 Role-based access
+  const { user } = useContext(AuthContext);
+  const canManageProducts = user?.role === "admin" || user?.role === "staff";
+
   /* ---------------- API calls ---------------- */
 
   const normalizeType = (type: string): ProductType => {
@@ -45,7 +50,7 @@ export default function ProductList() {
       case "gravel & chippings":
         return "GravelAndChippings";
       default:
-        return "PavingStones"; // fallback
+        return "PavingStones";
     }
   };
 
@@ -54,7 +59,6 @@ export default function ProductList() {
       setLoading(true);
       const data = await apiFetch("/products/");
 
-      // Normalize type to match ProductType
       const normalized: Product[] = data.map((p: any) => ({
         ...p,
         type: normalizeType(p.type),
@@ -113,16 +117,17 @@ export default function ProductList() {
 
   if (loading) return <p className="loading">Loading...</p>;
 
-  /* ---------------- UI ---------------- */
-console.log("Products state:", products); // tijdelijke debug
-
   return (
     <div className="product-page">
       <div className="header">
         <h1>Products</h1>
-        <button className="add-btn" onClick={() => setShowAddModal(true)}>
-          Add Product
-        </button>
+
+        {/* 🔐 Alleen admin/staff mogen producten toevoegen */}
+        {canManageProducts && (
+          <button className="add-btn" onClick={() => setShowAddModal(true)}>
+            Add Product
+          </button>
+        )}
       </div>
 
       <div className="filters">
@@ -175,22 +180,29 @@ console.log("Products state:", products); // tijdelijke debug
               <td>€{p.total_value}</td>
               <td>{p.location}</td>
               <td>{p.status}</td>
+
               <td>
-                <button
-                  className="edit-btn"
-                  onClick={() => {
-                    setSelectedProduct(p);
-                    setShowEditModal(true);
-                  }}
-                >
-                  Edit
-                </button>
-                <button
-                  className="delete-btn"
-                  onClick={() => handleDeleteProduct(p.id)}
-                >
-                  Delete
-                </button>
+                {/* 🔐 Alleen admin/staff mogen edit/delete */}
+                {canManageProducts && (
+                  <>
+                    <button
+                      className="edit-btn"
+                      onClick={() => {
+                        setSelectedProduct(p);
+                        setShowEditModal(true);
+                      }}
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDeleteProduct(p.id)}
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
               </td>
             </tr>
           ))}

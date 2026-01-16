@@ -32,7 +32,19 @@
   background: #f3f4f6;
 }
 
-/* kleurstatus badges */
 .status.pending { color: #d97706; font-weight: 600; }
 .status.completed { color: #16a34a; font-weight: 600; }
 .status.cancelled { color: #dc2626; font-weight: 600; }
+
+.order-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sort-select {
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+

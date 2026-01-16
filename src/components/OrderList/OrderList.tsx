@@ -20,6 +20,8 @@ interface Order {
 export default function OrderList() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState("created_at");
+
   const navigate = useNavigate();
 
   const fetchOrders = async () => {
@@ -51,14 +53,38 @@ export default function OrderList() {
       })
       .replace(",", "");
 
+
+  const sortedOrders = [...orders].sort((a, b) => {
+    if (sortBy === "created_at") {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    }
+    if (sortBy === "status") {
+      return a.status.localeCompare(b.status);
+    }
+    return 0;
+  });
+
   return (
     <div className="order-page">
       <div className="order-header">
         <h1>Orders</h1>
-        <button onClick={() => navigate("/orders/create")}>
-          + Nieuwe order
-        </button>
+
+        <div className="order-actions">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="sort-select"
+          >
+            <option value="created_at">Sort on date</option>
+            <option value="status">Sort on status</option>
+          </select>
+
+          <button className="add-btn" onClick={() => navigate("/orders/create")}>
+            + New Order
+          </button>
+        </div>
       </div>
+
 
       <table className="order-table">
         <thead>
@@ -72,7 +98,7 @@ export default function OrderList() {
         </thead>
 
         <tbody>
-          {orders.map((order) => (
+          {sortedOrders.map((order) => (
             <tr
               key={order.id}
               onClick={() => navigate(`/orders/${order.id}`)}

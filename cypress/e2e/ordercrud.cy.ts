@@ -27,15 +27,12 @@ it('ordercreateandreceive', function() {
 
   cy.get('table.order-table tbody tr', { timeout: 8000 })
     .first()
-    .should('exist');
-
-  cy.get('table.order-table tbody tr')
-    .first()
+    .should('exist')
     .click();
 
-  cy.contains('button', 'Receive').click();
+  cy.contains('button', /mark as delivered/i).click();
 
-  cy.contains('.status', 'received', { matchCase: false })
+  cy.contains('p', /status:\s*received/i)
     .should('exist');
 
   cy.get('a[href="/products"]').click();

@@ -31,11 +31,9 @@ export default function ProductList() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  // 🔐 Role-based access
   const { user } = useContext(AuthContext);
   const canManageProducts = user?.role === "admin" || user?.role === "staff";
 
-  /* ---------------- API calls ---------------- */
 
   const normalizeType = (type: string): ProductType => {
     switch (type.toLowerCase()) {
@@ -99,7 +97,6 @@ export default function ProductList() {
     }
   };
 
-  /* ---------------- Filter & sort ---------------- */
 
   const filteredProducts = products.filter(
     (p) =>
@@ -122,7 +119,6 @@ export default function ProductList() {
       <div className="header">
         <h1>Products</h1>
 
-        {/* 🔐 Alleen admin/staff mogen producten toevoegen */}
         {canManageProducts && (
           <button className="add-btn" onClick={() => setShowAddModal(true)}>
             Add Product

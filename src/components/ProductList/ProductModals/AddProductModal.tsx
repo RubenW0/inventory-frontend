@@ -6,7 +6,7 @@ import { apiFetch } from "../../../api/api";
 
 interface AddProductModalProps {
   onClose: () => void;
-  onSave: () => void; 
+  onSave: () => void;
 }
 
 export default function AddProductModal({ onClose, onSave }: AddProductModalProps) {
@@ -17,8 +17,13 @@ export default function AddProductModal({ onClose, onSave }: AddProductModalProp
   const [advisedPrice, setAdvisedPrice] = useState("");
   const [location, setLocation] = useState("");
 
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
 
     try {
       await apiFetch("/products/create/", {
@@ -33,17 +38,15 @@ export default function AddProductModal({ onClose, onSave }: AddProductModalProp
         }),
       });
 
-      setName("");
-      setStockQuantity("");
-      setMinStock("");
-      setAdvisedPrice("");
-      setLocation("");
+      setSuccess("Product added successfully!");
 
-      onSave(); 
-      onClose();
+      setTimeout(() => {
+        onSave();
+        onClose();
+      }, 600);
+
     } catch (err) {
-      console.error("Failed to add product:", err);
-      alert("Failed to add product. Check console for details.");
+      setError("Failed to add product. Please try again.");
     }
   };
 
@@ -51,6 +54,9 @@ export default function AddProductModal({ onClose, onSave }: AddProductModalProp
     <div className="modal-backdrop">
       <div className="modal">
         <h2>Add Product</h2>
+
+        {error && <p className="modal-error">{error}</p>}
+        {success && <p className="success-banner">{success}</p>}
 
         <form onSubmit={handleSubmit} className="modal-form">
           <label>

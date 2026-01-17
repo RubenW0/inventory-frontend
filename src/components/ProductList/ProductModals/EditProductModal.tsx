@@ -7,7 +7,7 @@ import { apiFetch } from "../../../api/api";
 interface EditProductModalProps {
   product: Product;
   onClose: () => void;
-  onSave: (updated: Product) => void; 
+  onSave: (updated: Product) => void;
 }
 
 export default function EditProductModal({ product, onClose, onSave }: EditProductModalProps) {
@@ -17,6 +17,9 @@ export default function EditProductModal({ product, onClose, onSave }: EditProdu
   const [minStock, setMinStock] = useState(String(product.min_stock));
   const [advisedPrice, setAdvisedPrice] = useState(String(product.advised_price));
   const [location, setLocation] = useState(product.location);
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     setName(product.name);
@@ -29,6 +32,8 @@ export default function EditProductModal({ product, onClose, onSave }: EditProdu
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
 
     try {
       await apiFetch(`/products/${product.id}/update/`, {
@@ -43,7 +48,7 @@ export default function EditProductModal({ product, onClose, onSave }: EditProdu
         }),
       });
 
-      onSave({
+      const updatedProduct: Product = {
         id: product.id,
         name,
         type,
@@ -53,12 +58,16 @@ export default function EditProductModal({ product, onClose, onSave }: EditProdu
         total_value: product.total_value,
         location,
         status: product.status,
-      });
+      };
 
-      onClose();
+      onSave(updatedProduct);
+
+      setSuccess("Product updated successfully!");
+
+      setTimeout(() => onClose(), 600);
+
     } catch (err) {
-      console.error("Failed to update product:", err);
-      alert("Failed to update product. Check console for details.");
+      setError("Failed to update product. Please try again.");
     }
   };
 
@@ -66,6 +75,9 @@ export default function EditProductModal({ product, onClose, onSave }: EditProdu
     <div className="modal-backdrop">
       <div className="modal">
         <h2>Edit Product</h2>
+
+        {error && <p className="modal-error">{error}</p>}
+        {success && <p className="success-banner">{success}</p>}
 
         <form onSubmit={handleSubmit} className="modal-form">
           <label>

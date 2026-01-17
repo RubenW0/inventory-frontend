@@ -7,6 +7,8 @@ import OrderDetailPage from "./pages/OrderDetailpage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProtectedHomeRoute from "./components/ProtectedHomeRoute";
+import AdminUsersPage from "./pages/AdminUsersPage";
+
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/orders/create" element={<OrderCreatePage />} />
           <Route path="/orders/:id" element={<OrderDetailPage />} />
+
+          <Route path="/admin/users" element={<AdminUsersPage />} />
 
         </Routes>
       </div>

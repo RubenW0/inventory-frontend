@@ -23,6 +23,10 @@ export default function Navbar() {
             </>
           )}
 
+          {user?.role === "admin" && (
+            <NavLink to="/admin/users" className="nav-item">Users</NavLink>
+          )}
+
           {user && (
             <>
               <span className="nav-username">Hi, {user.username}</span>
@@ -30,6 +34,7 @@ export default function Navbar() {
               <button className="nav-logout" onClick={logout}>Logout</button>
             </>
           )}
+          
         </div>
 
       </nav>

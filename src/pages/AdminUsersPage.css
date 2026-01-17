@@ -1,0 +1,55 @@
+.admin-users-page {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.admin-users-page h1 {
+  font-size: 24px;
+  margin: 0 0 20px 0;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.users-table th,
+.users-table td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.users-table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+.users-table tr:hover {
+  background: #f3f4f6;
+}
+
+.role-select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.role-select:hover {
+  border-color: #2563eb;
+}
+
+.role-select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}

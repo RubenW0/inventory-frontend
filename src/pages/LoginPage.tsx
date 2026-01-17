@@ -13,8 +13,13 @@ export default function LoginPage() {
     password: ""
   });
 
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
 
     try {
       const result = await loginUser(form);
@@ -23,7 +28,6 @@ export default function LoginPage() {
       localStorage.setItem("refresh", result.refresh);
 
       const me = await fetchMe();
-      console.log("ME RESPONSE:", me);
 
       const userData = {
         id: me.id,
@@ -34,10 +38,16 @@ export default function LoginPage() {
       login(userData);
       localStorage.setItem("user", JSON.stringify(userData));
 
-      navigate("/products");
+      setSuccess("Login successful! Redirecting...");
+
+      setTimeout(() => navigate("/products"), 600);
 
     } catch (err: any) {
-      alert("Login failed: " + err.message);
+      if (err?.detail) {
+        setError("Incorrect username or password.");
+      } else {
+        setError("Login failed. Please try again.");
+      }
     }
   };
 
@@ -45,6 +55,9 @@ export default function LoginPage() {
     <div className="auth-container">
       <form className="auth-card" onSubmit={handleSubmit}>
         <h2 className="auth-title">Login</h2>
+
+        {error && <p className="auth-error">{error}</p>}
+        {success && <p className="success-banner">{success}</p>}
 
         <label>Username</label>
         <input

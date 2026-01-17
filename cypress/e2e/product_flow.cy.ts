@@ -5,7 +5,7 @@ it('login create order', function() {
   cy.get('#root [name="password"]').should("be.visible").type('test123');
   cy.get('#root button.auth-btn').should("be.enabled").click();
 
-  cy.url().should("eq", "http://localhost:5173/");
+  cy.url().should("include", "/products");
 
   cy.get('#root a[href="/products"]').click();
   cy.url().should("include", "/products");
